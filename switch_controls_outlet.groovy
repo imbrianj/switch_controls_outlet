@@ -19,12 +19,10 @@ preferences {
 }
 
 def installed() {
-  state.light = "on"
   subscribe(wallSwitch, "switch", changeLights, [filterEvents: false])
 }
 
 def updated() {
-  state.light = "on"
   unsubscribe()
   subscribe(wallSwitch, "switch", changeLights, [filterEvents: false])
 }
