@@ -53,17 +53,19 @@ def changeLights(evt) {
 }
 
 def doubleSwitch(evt) {
-  log.info("Switch is off, but we want to toggle outlets")
+  if(evt.isPhysical()) {
+    log.info("Switch is off, but we want to toggle outlets")
 
-  if(outlets.findAll { it?.latestValue("switch") == "on" }) {
-    log.info("Toggle lights off")
+    if(outlets.findAll { it?.latestValue("switch") == "on" }) {
+      log.info("Toggle lights off")
 
-    outlets?.off()
-  }
+      outlets?.off()
+    }
 
-  else {
-    log.info("Toggle lights on")
+    else {
+      log.info("Toggle lights on")
 
-    outlets?.on()
+      outlets?.on()
+    }
   }
 }
