@@ -5,7 +5,7 @@
  *  Date: 2013-11-16
  */
 preferences {
-  section("Turn on a which switch?") {
+  section("Turn on with which switch?") {
     input "wallSwitch", "capability.switch"
   }
 
@@ -19,40 +19,58 @@ preferences {
 }
 
 def installed() {
-  subscribe(wallSwitch, "switch", changeLights, [filterEvents: false])
+  init()
 }
 
 def updated() {
   unsubscribe()
-  subscribe(wallSwitch, "switch", changeLights, [filterEvents: false])
+  init()
 }
 
-def changeLights(evt) {
-  if (evt.value == "off" && wallSwitch.latestValue("switch") == "off" && offToggle == "Yes") {
-    log.info("Switch is off, but we want to toggle outlets")
+def init() {
+  subscribe(wallSwitch, "switch", lightSwitch)
 
-    if(outlets.findAll { it?.latestValue("switch") == "on" }) {
-      log.info("Toggle lights off")
+  if(offToggle == "Yes") {
+    subscribe(wallSwitch, "switch.off", doubleSwitch, [filterEvents: false])
+  }
+}
 
-      outlets?.off()
-    }
-
-    else {
-      log.info("Toggle lights on")
-
-      outlets?.on()
-    }
+def changeLights(state) {
+  if(state == "off") {
+    outlets?.off();
   }
 
-  else if(evt.value == "on") {
+  else {
+    outlets?.on();
+  }
+}
+
+def lightSwitch(evt) {
+  if(evt.value == "on") {
     log.info("Turning on lights")
 
-    outlets?.on()
+    changeLights("on")
   }
 
   else {
     log.info("Turning off lights")
 
-    outlets?.off()
+    changeLights("off")
+  }
+}
+
+def doubleSwitch(evt) {
+  log.info("Switch is off, but we want to toggle outlets")
+
+  if(outlets.findAll { it?.latestValue("switch") == "on" }) {
+    log.info("Toggle lights off")
+
+    changeLights("off")
+  }
+
+  else {
+    log.info("Toggle lights on")
+
+    changeLights("on")
   }
 }
