@@ -3,6 +3,9 @@
  *
  *  Author: brian@bevey.org
  *  Date: 2013-11-16
+ *
+ *  A Z-Wave switch controls any given outlets.  Allows independent control of
+ *  outlets by turning the switch off when already in an off state.
  */
 preferences {
   section("Turn on with which switch?") {
@@ -28,34 +31,24 @@ def updated() {
 }
 
 def init() {
-  subscribe(wallSwitch, "switch", lightSwitch)
+  subscribe(wallSwitch, "switch", changeLights)
 
   if(offToggle == "Yes") {
     subscribe(wallSwitch, "switch.off", doubleSwitch, [filterEvents: false])
   }
 }
 
-def changeLights(state) {
-  if(state == "off") {
-    outlets?.off();
-  }
-
-  else {
-    outlets?.on();
-  }
-}
-
-def lightSwitch(evt) {
+def changeLights(evt) {
   if(evt.value == "on") {
     log.info("Turning on lights")
 
-    changeLights("on")
+    outlets?.on()
   }
 
   else {
     log.info("Turning off lights")
 
-    changeLights("off")
+    outlets?.off()
   }
 }
 
@@ -65,12 +58,12 @@ def doubleSwitch(evt) {
   if(outlets.findAll { it?.latestValue("switch") == "on" }) {
     log.info("Toggle lights off")
 
-    changeLights("off")
+    outlets?.off()
   }
 
   else {
     log.info("Toggle lights on")
 
-    changeLights("on")
+    outlets?.on()
   }
 }
