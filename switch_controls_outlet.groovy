@@ -51,8 +51,9 @@ def changeLights(evt) {
        (evt.value == "on") &&
        (toggle != "No") &&
        (state.wallSwitch == "on")) {
-      log.info("Switch is on, but we want to toggle switch")
-      wallSwitch.off()
+      log.info("Switch is on, but we want to toggle outlets")
+
+      toggleOutlets()
     }
 
     else if((wallSwitch.latestValue("switch") == "off") &&
@@ -60,17 +61,8 @@ def changeLights(evt) {
             (toggle != "No") &&
             (state.wallSwitch == "off")) {
       log.info("Switch is off, but we want to toggle outlets")
-      if(outlets.findAll { it?.latestValue("switch") == "on" }) {
-        log.info("Toggle lights off")
 
-        outlets?.off()
-      }
-
-      else {
-        log.info("Toggle lights on")
-
-        outlets?.on()
-      }
+      toggleOutlets()
     }
       
     else if(evt.value == "on") {
@@ -85,4 +77,18 @@ def changeLights(evt) {
   }
 
   state.wallSwitch = wallSwitch.latestValue("switch")
+}
+
+def toggleOutlets() {
+  if(outlets.findAll { it?.latestValue("switch") == "on" }) {
+    log.info("Toggle lights off")
+
+    outlets?.off()
+  }
+
+  else {
+    log.info("Toggle lights on")
+
+    outlets?.on()
+  }
 }
