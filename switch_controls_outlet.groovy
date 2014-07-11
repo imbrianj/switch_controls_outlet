@@ -17,6 +17,17 @@
  *  If switch is on: Turn switch on and it will turn off the switch and any
  *  outlets will remain on.
  */
+ 
+ definition(
+  name: "Switch Controls Outlet",
+  namespace: "imbrianj",
+  author: "brian@bevey.org",
+  description: "A Z-Wave switch controls any given outlets.  Allows independent control of outlet by turning the switch off when already in an off state.",
+  category: "Convenience",
+  iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
+  iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience%402x.png"
+)
+
 preferences {
   section("Turn on with which switch?") {
     input "wallSwitch", "capability.switch"
@@ -64,7 +75,7 @@ def changeLights(evt) {
 
       toggleOutlets()
     }
-      
+
     else if(evt.value == "on") {
       log.info("Turning on lights")
       outlets?.on()
